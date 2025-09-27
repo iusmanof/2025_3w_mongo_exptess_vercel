@@ -3,8 +3,8 @@ import {BlogViewModel} from "../model_types/BlogViewModel";
 import {BlogInputModel} from "../model_types/BlogInputModel";
 
 // const url = "mongodb+srv://igralex1:qwert!@cluster0.uocz9zz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-const url = "mongodb://localhost:27017"
-console.log("url", url)
+const url: string | undefined = process.env.MONGODB_URI
+if (!url) throw new Error("MONGODB_URI is not defined");
 
 const client = new MongoClient(url)
 export const blogCollection = client.db('local').collection<BlogInputModel>('blogs')

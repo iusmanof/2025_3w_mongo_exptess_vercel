@@ -12,8 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.runDB = exports.postCollection = exports.blogCollection = void 0;
 const mongodb_1 = require("mongodb");
 // const url = "mongodb+srv://igralex1:qwert!@cluster0.uocz9zz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-const url = "mongodb://localhost:27017";
-console.log("url", url);
+const url = process.env.MONGODB_URI;
+if (!url)
+    throw new Error("MONGODB_URI is not defined");
 const client = new mongodb_1.MongoClient(url);
 exports.blogCollection = client.db('local').collection('blogs');
 exports.postCollection = client.db('local').collection('post');
