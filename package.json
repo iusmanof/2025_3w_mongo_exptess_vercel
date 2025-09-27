@@ -3,11 +3,15 @@
   "packageManager": "yarn@4.9.2",
   "scripts": {
     "dev": "nodemon --inspect dist/index.js",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "ngrok": "ngrok http 3000"
   },
   "dependencies": {
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "express-validator": "^7.2.1",
     "mongodb": "^6.20.0"
   },
   "devDependencies": {

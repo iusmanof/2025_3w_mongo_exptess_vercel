@@ -13,32 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const mongodb_1 = require("mongodb");
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
+const BlogRouters_1 = require("./routers/BlogRouters");
+const PostRouters_1 = require("./routers/PostRouters");
+const post_data_access_layer_1 = require("./dataAccessLayer/post-data-access-layer");
+const db_1 = require("./repositories/db");
+const blog_data_access_layer_mongodb_1 = require("./dataAccessLayer/blog-data-access-layer-mongodb");
 const app = (0, express_1.default)();
-const port = process.env.PORT || 3000;
-const uri = process.env.MONGO_URI || 'mongodb://localhost:27017';
-const client = new mongodb_1.MongoClient(uri);
-function start() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield client.connect();
-            console.log('Connected to MongoDB');
-            const db = client.db('youtube'); // Your DB name
-            app.get('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
-                const collection = db.collection('videos');
-                const items = yield collection.find({}).toArray();
-                console.log(items);
-                res.json(items);
-            }));
-            app.listen(port, () => {
-                console.log(`Server running on http://localhost:${port}`);
-            });
-        }
-        catch (err) {
-            console.error('Failed to connect to MongoDB', err);
-        }
+const port = process.env.port || 3000;
+app.use(express_1.default.json());
+app.use('/blogs', BlogRouters_1.BlogRouter);
+app.use('/posts', PostRouters_1.PostRouter);
+app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield res.send('blogs api');
+}));
+app.delete('/testing/all-data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    blog_data_access_layer_mongodb_1.blogDataAccessLayerMongoDB.deleteAllBlogs();
+    post_data_access_layer_1.postAccessLayer.deleteAllPosts();
+    res.status(204).send("All data is deleted");
+}));
+const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, db_1.runDB)();
+    const blogs = yield db_1.blogCollection.find().toArray();
+    console.log("Блоги:", blogs);
+    app.listen(port, () => {
+        console.log(`App listening on port ${port}`);
     });
-}
-start();
+});
+startApp();
+exports.default = app;
